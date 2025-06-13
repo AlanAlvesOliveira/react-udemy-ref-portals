@@ -1,4 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
+import { createPortal } from "react-dom";
 
 //esse forwardRef é necessário para fazer funcionar em versões mais antigas do react
 const ResultModal = forwardRef(function ResultModal({ onReset, targetTime, remainingTime }, ref) {
@@ -20,7 +21,12 @@ const ResultModal = forwardRef(function ResultModal({ onReset, targetTime, remai
     }
   });
 
-  return (
+  //explicação funcionalidae createPortal
+  //semanticamente pode ser o caso mudar a localização do <dialog> no html montado depois de rodar a aplicação.
+  //neste caso é colocado um <div id="modal"></div> em index.html
+  //o portal transporta esse componente para lá com document.getElementById("modal")
+
+  return createPortal(
     <dialog ref={dialog} className="result-modal" onClose={onReset}>
       {userLost && <h2>You lost</h2>}
       {!userLost && <h2>Your Score: {score}</h2>}
@@ -33,7 +39,8 @@ const ResultModal = forwardRef(function ResultModal({ onReset, targetTime, remai
       <form method="dialog" onSubmit={onReset}>
         <button>Close</button>
       </form>
-    </dialog>
+    </dialog>,
+    document.getElementById("modal")
   );
 });
 export default ResultModal;
